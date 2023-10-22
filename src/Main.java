@@ -61,7 +61,10 @@ public class Main {
         return null;
     }
     public static void main(String[] args) {
-        String json = Recognize("GalGame模型",true);
-        System.out.println(json);
+        String json = Recognize("动漫模型",true);
+        if (json!=null){
+            System.out.println(json);
+        }
+        
     }
 }
