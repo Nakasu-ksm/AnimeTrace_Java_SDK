@@ -1,5 +1,6 @@
 import java.io.ByteArrayOutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class Main {
         put("高准确率公测GalGame模型", "game_model_kirakira");
 //        put("漫画（开发中）", "manga");
     }};
-    private static String Recognize(String modelName, boolean ai_detect){
+    private static String Recognize(String modelName, boolean ai_detect, String image_url){
         try {
             int flag_ai_detect = 0;
             if (ai_detect){
@@ -34,7 +35,10 @@ public class Main {
             URI url = new URI("https://aiapiv2.animedb.cn/ai/api/detect?force_one=1&model=%s&ai_detect=%s".formatted(modelName, String.valueOf(flag_ai_detect)));
             // 创建HttpClient
             HttpClient client = HttpClient.newHttpClient();
-            byte[] file_byte = Files.readAllBytes(Paths.get("src/tes.png"));
+            if (!Files.exists(Path.of(image_url))){
+                throw new RuntimeException("图片不存在");
+            }
+            byte[] file_byte = Files.readAllBytes(Paths.get(image_url));
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             String boundary = "WebKitFormBoundaryQQGkjc4BHeWAQfRL";
             String body = "------" + boundary + "\r\n" +
@@ -61,10 +65,10 @@ public class Main {
         return null;
     }
     public static void main(String[] args) {
-        String json = Recognize("动漫模型",true);
+        String json = Recognize("动漫模型",true, "src/tes.png");
         if (json!=null){
             System.out.println(json);
         }
-        
+
     }
 }
