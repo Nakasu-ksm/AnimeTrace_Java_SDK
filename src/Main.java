@@ -19,26 +19,23 @@ public class Main {
         put("高准确率公测GalGame模型", "game_model_kirakira");
 //        put("漫画（开发中）", "manga");
     }};
-    private static String Recognize(String modelName, boolean ai_detect, String image_url){
+    private static String Recognize(String modelName, boolean aiDetect, String imageUrl){
         try {
-            int flag_ai_detect = 0;
-            if (ai_detect){
-                flag_ai_detect = 1;
-            }
+            int flagAiDetect = aiDetect ? 1 : 0;
 
             if (modelList.get(modelName)==null){
-                throw new RuntimeException("模型不存在");
+                return "模型不存在";
             }
 
             final String newLine = "\r\n";
             final String boundaryPrefix = "--";
-            URI url = new URI("https://aiapiv2.animedb.cn/ai/api/detect?force_one=1&model=%s&ai_detect=%s".formatted(modelName, String.valueOf(flag_ai_detect)));
+            URI url = new URI("https://aiapiv2.animedb.cn/ai/api/detect?force_one=1&model=%s&ai_detect=%s".formatted(modelName, String.valueOf(flagAiDetect)));
             // 创建HttpClient
             HttpClient client = HttpClient.newHttpClient();
-            if (!Files.exists(Path.of(image_url))){
-                throw new RuntimeException("图片不存在");
+            if (!Files.exists(Path.of(imageUrl))){
+                return "图片不存在";
             }
-            byte[] file_byte = Files.readAllBytes(Paths.get(image_url));
+            byte[] fileByte = Files.readAllBytes(Paths.get(imageUrl));
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             String boundary = "WebKitFormBoundaryQQGkjc4BHeWAQfRL";
             String body = "------" + boundary + "\r\n" +
@@ -48,7 +45,7 @@ public class Main {
                     "\r\n" +
                     "\r\n";
             byteArrayOutputStream.write(body.getBytes());
-            byteArrayOutputStream.write(file_byte);
+            byteArrayOutputStream.write(fileByte);
             String end = "\r\n" + "\r\n"+ "--" + boundary + "--\r\n";
             byteArrayOutputStream.write(end.getBytes());
             HttpRequest request = HttpRequest.newBuilder()
